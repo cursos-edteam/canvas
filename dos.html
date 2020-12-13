@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curso Canvas</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      // Capturando canvas
+      var canvas = document.querySelector('#canvas');
+      // Captura o definir el contexto 2D o 3D
+      var contexto = canvas.getContext('2d');
+
+      var btnCrearGrillas = document.querySelector('#crearGrillas');
+      btnCrearGrillas.addEventListener('click', () => {
+        var distanciaX = 20;
+        var distanciaY = 20;
+        var colorLinea = 'red';
+        var anchoLinea = .5;
+
+        for (var i = distanciaX + anchoLinea; i < contexto.canvas.width; i += distanciaX) {
+          contexto.beginPath();
+          contexto.moveTo(i, 0);
+          contexto.lineTo(i, contexto.canvas.height);
+          contexto.strokeStyle = colorLinea;
+          contexto.lineWidth = anchoLinea;
+          contexto.stroke();
+        }
+
+        for (var i = distanciaY + anchoLinea; i < contexto.canvas.height; i += distanciaY) {
+          contexto.beginPath();
+          contexto.moveTo(0, i);
+          contexto.lineTo(contexto.canvas.height, i);
+          contexto.strokeStyle = colorLinea;
+          contexto.lineWidth = anchoLinea;
+          contexto.stroke();
+        }
+      });
+
+
+      var btnCrearEventos = document.querySelector('#crearEventos');
+      btnCrearEventos.addEventListener('click', () => {
+        // Adicionando el mouse move
+        canvas.addEventListener('mousemove', (e) => {
+          // var posicionReal = canvas.getBoundingClientRect();
+          // console.log(e.clientX, e.clientY);
+        });
+        // Adicionando el mousedown
+        canvas.addEventListener('mousedown', (e) => {
+          var posicionReal = canvas.getBoundingClientRect();
+          var x = e.clientX - posicionReal.left;
+          var y = e.clientY - posicionReal.top;
+          console.log(x, y);
+        })
+        // Adicionando el mouseup
+        canvas.addEventListener('mouseup', (e) => {
+          // console.log(e.clientX, e.clientY);
+        })
+
+      });
+
+
+      var btnCrearTexto = document.querySelector('#textos');
+      btnCrearTexto.addEventListener('click', () => {
+        // Adicionando el mouse move
+        contexto.clearRect(0,0, 200, 200);
+        contexto.font = '20px Arial';
+        contexto.fillText('Texto en CANVAS', 10, 100);
+      });
+
+
+      var btnEmbeberImagen = document.querySelector('#fondoCanvas');
+      btnEmbeberImagen.addEventListener('click', () => {
+        // Obteniendo imagen dentro del canvas
+        var imagen = new Image();
+        imagen.src = './canvas.png';
+        imagen.onload = () => {
+          // Ya sabemos que la imagen se descargo completamente
+          contexto.drawImage(imagen, 0, 0, 200, 200);
+          var w = imagen.width; // 200
+          var h = imagen.height; // 200
+
+          var imageData = contexto.getImageData(0, 0, w, h);
+          data = imageData.data;
+          // for (var i = 0; i < data.length; i += 4) {
+          //   data[i] -= 120 ; // Red
+          //   data[i + 1] -= 120; // Green
+          //   data[i + 2] -= 120; // Blue
+          // }
+          
+          // Blanco y Negro
+          // for (var i = 0; i < data.length; i += 4) {
+          //   var promedio = (data[i] + data[i + 1] + data[i + 2]) / 3;
+          //   data[i] = promedio ; // Red
+          //   data[i + 1] = promedio; // Green
+          //   data[i + 2] = promedio; // Blue
+          // }
+
+          // Inverso
+          for (var i = 0; i < data.length; i += 4) {
+            data[i] = 255 - data[i] ; // Red
+            data[i + 1] = 255 - data[i + 1]; // Green
+            data[i + 2] = 255 - data[i + 2]; // Blue
+          }
+
+          contexto.putImageData(imageData, 0, 0);
+        };
+      });
+
+
+      var btnDibujar = document.querySelector('#dibujar');
+      var posicionInicial = {}; // mousedown
+      var posicionFinal = {};  //mouseup
+      btnDibujar.addEventListener('click', () => {
+        // Adicionando el mousemove 
+        canvas.addEventListener('mousemove', (e) => {
+          var posicionReal = canvas.getBoundingClientRect();
+          var x = e.clientX - posicionReal.left;
+          var y = e.clientY - posicionReal.top;
+          posicionInicial = {
+            x: 0,
+            y: 0,
+          };
+          posicionFinal = {
+            x,
+            y,
+          };
+          contexto.beginPath();
+          contexto.moveTo(posicionInicial.x, posicionInicial.y);
+          contexto.lineTo(posicionFinal.x, posicionFinal.y);
+          contexto.stroke();
+        });
+        // Adicionando el mousedown
+        // canvas.addEventListener('mousedown', (e) => {
+        //   var posicionReal = canvas.getBoundingClientRect();
+        //   var x = e.clientX - posicionReal.left;
+        //   var y = e.clientY - posicionReal.top;
+        //   posicionInicial = {
+        //     x,
+        //     y,
+        //   };
+        // })
+        // Adicionando el mouseup
+        // canvas.addEventListener('mouseup', (e) => {
+        //   var posicionReal = canvas.getBoundingClientRect();
+        //   var x = e.clientX - posicionReal.left;
+        //   var y = e.clientY - posicionReal.top;
+        //   posicionFinal = {
+        //     x,
+        //     y,
+        //   };
+        //   contexto.beginPath();
+        //   contexto.moveTo(posicionInicial.x, posicionInicial.y);
+        //   contexto.lineTo(posicionFinal.x, posicionFinal.y);
+        //   contexto.stroke();
+        // })
+
+      });
+
+    });
+  </script>
+  <style>
+    .page-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas {
+      border: 1px solid red;
+    }
+    .buttons {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-around;
+    }
+    .buttons button {
+      margin: 10px;
+      flex-grow: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Always shows a header, even in smaller screens. -->
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <!-- Title -->
+        <span class="mdl-layout-title">Canvas</span>
+        <!-- Add spacer, to align navigation to the right -->
+        <div class="mdl-layout-spacer"></div>
+        <!-- Navigation. We hide it in small screens. -->
+        <nav class="mdl-navigation mdl-layout--large-screen-only">
+          <a class="mdl-navigation__link" href="index.html">Módulo 1</a>
+          <a class="mdl-navigation__link" href="dos.html">Módulo 2</a>
+          <a class="mdl-navigation__link" href="tres.html">Módulo 3</a>
+          <a class="mdl-navigation__link" href="cuatro.html">Módulo 4</a>
+        </nav>
+      </div>
+    </header>
+    <div class="mdl-layout__drawer">
+      <span class="mdl-layout-title">Canvas</span>
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link" href="index.html">Módulo 1</a>
+        <a class="mdl-navigation__link" href="dos.html">Módulo 2</a>
+        <a class="mdl-navigation__link" href="tres.html">Módulo 3</a>
+        <a class="mdl-navigation__link" href="cuatro.html">Módulo 4</a>
+      </nav>
+    </div>
+    <main class="mdl-layout__content">
+      <div class="page-content">
+        <div class="buttons">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="crearGrillas">
+            Crear grillas
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="crearEventos">
+            Crear eventos
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="dibujar">
+            Dibujar
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="fondoCanvas">
+            Imagen fondo canvas
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="textos">
+            Textos
+          </button>
+        </div>
+        <canvas id="canvas" width="200" height="200">
+          Tu navegador no soporta CANVAS
+        </canvas>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
